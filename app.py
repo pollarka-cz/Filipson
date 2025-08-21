@@ -7,9 +7,7 @@ st.title("Vizualizace dat matriční knihy")
 
 st.write('Matrika dětí narozených v katolickém vyznání Klucké Chvalovice 1840 - 1913. '
          'Datový soubor byl pořízen přepisem ručně psané matriky.')
-# st.info('Popis dat')
-# st.write('tady bude něco o starych matrikách a časovém rámci  a cíli zjišťování')
-# st.balloons()
+
 st.info('Historický kontext')
 st.write('Matriky se vedly na faře, proto jsou narozené děti rozlišené podle vyznání rodičů. Zde '
          'je použita pouze matrika katolického obyvatelstva. Ve statistickém a místopisném seznamu '
@@ -44,39 +42,24 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.write('Zdrojová data k nahlédnutí')
 st.dataframe(df)
-#
-# # Výběr sloupců pro osu X a Y
-# x_col = st.selectbox("inf_rok_nar:", df.columns)
-# y_col = st.selectbox("inf_jmeno1:", df.columns)
-#
-# # Interaktivní bodový graf
-# fig = px.scatter(df, x=x_col, y=y_col, title="Interaktivní bodový graf")
-# st.plotly_chart(fig, use_container_width=True)
 
 
-import pandas as pd
-import plotly.express as px
-import streamlit as st
 
 
-import pandas as pd
-import plotly.express as px
-import streamlit as st
+muzi = st.checkbox("Muž", value=True, key="1_m")
+zeny = st.checkbox("Žena", value=True, key="1_f")
 
-muzi = st.checkbox("Muž", value=True)
-zeny = st.checkbox("Žena", value=True)
 
-# Vyber pohlaví podle zaškrtnutí
 vybrano = []
 if muzi:
     vybrano.append("m")
 if zeny:
     vybrano.append("f")
 
-# Filtrování DataFrame podle pohlaví
+# Filtr
 df_filt = df[df["inf_fm"].isin(vybrano)]
 
-# Spočítáme četnost pro velikost bubliny
+# četnost
 df_counts = (
     df_filt.groupby(["inf_jmeno1", "inf_mes", "inf_rok", "inf_fm"])
     .size()
@@ -85,16 +68,15 @@ df_counts = (
 df_counts['inf_rok'] = df_counts['inf_rok'].astype(int)
 roky_serazene = sorted(df_counts['inf_rok'].unique())
 
-# Bublinový graf
 fig = px.scatter(
     df_counts,
     x="inf_jmeno1",
     y="inf_mes",
-    size="cetnost",       # velikost bubliny podle četnosti
+    size="cetnost",
     color="inf_fm",
     animation_frame="inf_rok",
     size_max=40,
-    color_discrete_map={"m": "blue", "f": "red"},
+    color_discrete_map={"m": "blue", "f": "#ff0066"},
     title="Bublinový graf četnosti narození dětí podle roku a měsíce "
 )
 
@@ -104,16 +86,19 @@ fig.update_yaxes(categoryorder="array", categoryarray=[
     "leden","únor","březen","duben","květen","červen",
     "červenec","srpen","září","říjen","listopad","prosinec"
 ])
+
+fig.update_layout(yaxis_title="Měsíc narození", xaxis_title="Jméno",
+                  legend_title_text="Pohlaví")
+
 fig.update_xaxes(tickmode="linear", dtick=1)
 st.plotly_chart(fig, use_container_width=True)
 
 
 # -------------------------------------
-
+# kluci
 dfm = df[df["inf_fm"] == "m"]
 
 st.code('mužský graf:')
-
 
 counts = dfm["inf_jmeno1"].value_counts().reset_index()
 counts.columns = ["jmeno", "cetnost"]
@@ -128,13 +113,30 @@ fig = px.bar(
 fig.update_xaxes(tickangle=45)
 st.plotly_chart(fig, use_container_width=True)
 
+# -------------------------------------
+# holky
+dff = df[df["inf_fm"] == "f"]
 
+st.code('ženský graf:')
 
+counts = dfm["inf_jmeno1"].value_counts().reset_index()
+counts.columns = ["jmeno", "cetnost"]
+counts = counts[counts["cetnost"] >= 2]
+fig = px.bar(
+    counts,
+    x="jmeno",
+    y="cetnost",
+    title="Četnost ženských jmen",
+    color_discrete_sequence=[ "#ff0066"])
 
+fig.update_xaxes(tickangle=45)
+st.plotly_chart(fig, use_container_width=True)
+
+# ---------------------------
 
 
 fig = px.scatter(
-    dfm,
+    dff,
     x="inf_jmeno1",
     y="inf_mes",
     # size="pocet",
@@ -150,3 +152,50 @@ fig.update_yaxes(categoryorder="array", categoryarray=[
 ])
 fig.update_xaxes(tickmode="linear", dtick=1)
 st.plotly_chart(fig, use_container_width=True)
+
+
+
+# -------------------------
+
+# --- Zaškrtávátka ---
+show_all = st.checkbox("Vše", value=False, key="3_all")
+show_mu = st.checkbox("Muži", value=True, key="3_m")
+show_ze = st.checkbox("Ženy", value=True, key="3_f")
+
+# --- Agregace ---
+if show_all:
+    # součet všech pohlaví
+    df_grouped = df.groupby("inf_rok").size().reset_index(name="pocet")
+    color_col = None
+else:
+    df_grouped = df.groupby(["inf_rok", "inf_fm"]).size().reset_index(name="pocet")
+
+    # filtr podle checkboxů
+    filtry = []
+    if show_mu:
+        filtry.append("m")
+    if show_ze:
+        filtry.append("f")
+
+    if filtry:
+        df_grouped = df_grouped[df_grouped["inf_fm"].isin(filtry)]
+        color_col = "inf_fm"
+    else:
+        st.warning("Vyber aspoň jednu možnost.")
+        st.stop()
+
+# --- Liniový graf ---
+fig = px.line(df_grouped,
+              x="inf_rok",
+              y="pocet",
+              color=color_col,
+              markers=True,
+              title="Počet narozených podle roku a pohlaví",
+             color_discrete_sequence=["#1f77b4", "#ff0066"])
+
+fig.update_layout(yaxis_title="Počet narozených", xaxis_title="Rok narození",
+                  legend_title_text="Pohlaví" if not show_all else "")
+
+st.plotly_chart(fig, use_container_width=True)
+
+# -----------------------------
