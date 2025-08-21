@@ -17,7 +17,7 @@ st.write('Matriky se vedly na faře, proto jsou narozené děti rozlišené podl
          ' V roce 1848, kdy začínají tyto matriční záznamy, bylo v obci 461 obyvatel bez ohledu na' 
          'vyznání. Zároveň je to rok kdy bylo možné se vykoupit z nucených prací (poddanství / robota)'
           'a v Rakouské monarchii probíhala revoluce. Dopad změn na malé obce tkvěl mimo jiné v zavedení'
-          'obecní samosprávy a další občanské svobody. Kolem roku 1860 vyhořel statek - zdroj zaměsnání 
+          'obecní samosprávy a další občanské svobody. Kolem roku 1860 vyhořel statek - zdroj zaměstnání '
           'místních obyvatel, nový statek byl postaven až po roce 1905.'
          )
 
@@ -199,4 +199,5 @@ fig.update_layout(yaxis_title="Počet narozených", xaxis_title="Rok narození",
 st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------------
+
 
