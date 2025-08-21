@@ -13,12 +13,12 @@ st.write('Matriky se vedly na faře, proto jsou narozené děti rozlišené podl
          'je použita pouze matrika katolického obyvatelstva. Ve statistickém a místopisném seznamu '
          '(J.G.Sommera) z roku 1834 má vesnice 64 domů a 484 obyvatele vesměs katolického vyznání '
          '(minoritně jsou zastoupeni židé a evangelíci). K obci patří vrchnostenský dvůr (dřevěný),'
-          'hostinec, myslivna (torzo hospody) a stranou ležící mlýn s pilou. V roce 1848, kdy'
-         'začínají tyto matriční záznamy, bylo v obci 461 obyvatel bez ohledu na vyznání. Zároveň'
-         'je rok kdy bylo možné se vykoupit z nucených prací (poddanství / robota) a v Rakouské '
-         'monarchii probíhala revoluce, jejíž dopad na malé obce tkvěl mimo jiné v zavedení obecní '
-         'samosprávy a další občanské svobody. Kolem roku 1860 vyhořel statek - zdroj zaměsnání místních '
-         'obyvatel, nový statek byl postaven až po roce 1905.'
+          'hostinec, myslivna (v r. 2025 torzo hospody) a stranou ležící mlýn s pilou.'
+         ' V roce 1848, kdy začínají tyto matriční záznamy, bylo v obci 461 obyvatel bez ohledu na' 
+         'vyznání. Zároveň je to rok kdy bylo možné se vykoupit z nucených prací (poddanství / robota)'
+          'a v Rakouské monarchii probíhala revoluce. Dopad změn na malé obce tkvěl mimo jiné v zavedení'
+          'obecní samosprávy a další občanské svobody. Kolem roku 1860 vyhořel statek - zdroj zaměsnání 
+          'místních obyvatel, nový statek byl postaven až po roce 1905.'
          )
 
 df = pd.read_csv("https://raw.githubusercontent.com/pollarka-cz/Filipson/master/jmena7.csv",
@@ -199,3 +199,4 @@ fig.update_layout(yaxis_title="Počet narozených", xaxis_title="Rok narození",
 st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------------
+
